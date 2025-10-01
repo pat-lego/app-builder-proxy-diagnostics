@@ -1,0 +1,25 @@
+{
+  "name": "@adobe/app-builder-proxy-diagnostics",
+  "version": "1.0.0",
+  "description": "A tool to diagnose proxy network connections using multiple methods",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "proxy",
+    "diagnostics",
+    "network",
+    "adobe",
+    "app-builder"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@adobe/aio-lib-core-networking": "^2.0.0",
+    "https-proxy-agent": "^7.0.2",
+    "http-proxy-agent": "^7.0.0",
+    "needle": "^3.1.0"
+  }
+}
