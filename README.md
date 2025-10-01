@@ -4,10 +4,11 @@ A comprehensive tool to diagnose proxy network connections for Adobe App Builder
 
 ## Features
 
-- **Multiple Connection Methods**: Tests connectivity using three different approaches:
+- **Multiple Connection Methods**: Tests connectivity using four different approaches:
   1. `@adobe/aio-lib-core-networking` package
-  2. `fetch` with `https-proxy-agent`/`http-proxy-agent` packages (and no proxy)
-  3. `needle` with `https-proxy-agent`/`http-proxy-agent` packages
+  2. `@adobe/aio-lib-runtime` package
+  3. `fetch` with `https-proxy-agent`/`http-proxy-agent` packages (and no proxy)
+  4. `needle` with `https-proxy-agent`/`http-proxy-agent` packages
 - **Comprehensive Reporting**: Detailed test results with success/failure status
 - **Environment Variable Support**: Uses `HTTPS_PROXY` and `HTTP_PROXY` environment variables
 
@@ -89,6 +90,9 @@ The tool provides detailed output including:
 🌐 Testing with fetch + proxy agents...
 ✅ fetch + proxy agents: Connection successful
 
+🌐 Testing with fetch (no proxy)...
+✅ fetch (no proxy): Connection successful
+
 📌 Testing with needle + proxy agents...
 ✅ needle + proxy agents: Connection successful
 
@@ -106,11 +110,15 @@ The tool provides detailed output including:
    Proxy: http://proxy.company.com:8080
    Status: 200
 
+✅ fetch (no proxy)
+   Proxy: Direct
+   Status: 200
+
 ✅ needle + proxy agents
    Proxy: http://proxy.company.com:8080
    Status: 200
 
-📈 Overall Success Rate: 4/4 (100%)
+📈 Overall Success Rate: 5/5 (100%)
 🎉 All tests passed! Proxy configuration is working correctly.
 ```
 
