@@ -2,7 +2,6 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 import { HttpProxyAgent } from 'http-proxy-agent';
 
 // Configuration constants
-export const INITIAL_TEST_ENDPOINT = 'https://httpbin.org/get';
 export const PROXY_TEST_ENDPOINT = 'https://deploy-service.app-builder.adp.adobe.io/ping';
 export const RUNTIME_API_HOST = 'https://deploy-service.app-builder.adp.adobe.io/runtime';
 export const TIMEOUT = 30000; // 30 seconds

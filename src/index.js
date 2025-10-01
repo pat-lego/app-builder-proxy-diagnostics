@@ -1,56 +1,11 @@
 #!/usr/bin/env node
 
-import { HttpsProxyAgent } from 'https-proxy-agent';
-import { HttpProxyAgent } from 'http-proxy-agent';
 import { testWithAioLibCoreNetworking } from './test-aio-lib-core-networking.js';
 import { testWithAioLibRuntime } from './test-aio-lib-runtime.js';
 import { testWithFetch } from './test-fetch-proxy.js';
 import { testWithNeedle } from './test-needle-proxy.js';
-import { INITIAL_TEST_ENDPOINT, PROXY_TEST_ENDPOINT, TIMEOUT, RUNTIME_API_HOST } from './constants.js';
+import { PROXY_TEST_ENDPOINT, RUNTIME_API_HOST } from './constants.js';
 import { getProxyForUrl } from 'proxy-from-env';
-
-/**
- * Check if a proxy server is reachable
- *
- * @param {string} proxyUrl - The proxy URL to test
- * @param {string} testEndpoint - The endpoint to test against
- * @param {number} timeout - Timeout in milliseconds
- * @returns {Promise<boolean>} - Whether the proxy is reachable
- */
-async function checkProxyReachability(proxyUrl, testEndpoint = INITIAL_TEST_ENDPOINT, timeout = TIMEOUT) {
-  if (!proxyUrl) {
-    return false;
-  }
-
-  try {
-    let agent;
-
-    if (testEndpoint.startsWith('https')) {
-      console.log('https')
-      agent = new HttpsProxyAgent(proxyUrl);
-    } else {
-      console.log('http')
-      agent = new HttpProxyAgent(proxyUrl);
-    }
-    
-    // Try to connect to the proxy server with a simple HTTP request
-    const response = await fetch(testEndpoint, {
-      agent,
-      signal: AbortSignal.timeout(timeout)
-    });
-    
-    if (response.ok) {
-      console.log(`✅ proxy ${proxyUrl} is reachable`);
-      return true;
-    } else {
-      console.log(`❌ proxy ${proxyUrl} returned status: ${response.status}`);
-      return false;
-    }
-  } catch (error) {
-    console.log(`❌ proxy ${proxyUrl} is not reachable: ${error.message}`);
-    return false;
-  }
-}
 
 /**
  * Main diagnostic function
@@ -137,6 +92,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export {
-  runDiagnostics,
-  checkProxyReachability
+  runDiagnostics
 };

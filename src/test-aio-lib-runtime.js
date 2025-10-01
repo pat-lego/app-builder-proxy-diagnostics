@@ -1,5 +1,5 @@
 import runtimeSdk from '@adobe/aio-lib-runtime';
-import { PROXY_TEST_ENDPOINT, TIMEOUT, USER_AGENT_BASE, RUNTIME_API_HOST } from './constants.js';
+import { TIMEOUT, USER_AGENT_BASE, RUNTIME_API_HOST } from './constants.js';
 
 /**
  * Test connection using @adobe/aio-lib-core-networking
