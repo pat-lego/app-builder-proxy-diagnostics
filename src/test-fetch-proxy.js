@@ -1,4 +1,5 @@
 import { PROXY_TEST_ENDPOINT, TIMEOUT, USER_AGENT_BASE, getProxyAgent } from './constants.js';
+import { fetch, ProxyAgent } from 'undici'
 
 /**
  * Test connection using fetch with proxy agents
@@ -26,7 +27,8 @@ export async function testWithFetch(
     };
 
     if (proxyUrl) {
-      options.agent = getProxyAgent(testEndpoint, proxyUrl);
+      const agent = new ProxyAgent(proxyUrl)
+      options.dispatcher = agent
     }
 
     const response = await fetch(testEndpoint, options);

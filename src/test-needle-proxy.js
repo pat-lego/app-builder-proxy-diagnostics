@@ -25,6 +25,7 @@ export async function testWithNeedle(
       }
     };
 
+    options.proxy = proxyUrl;
     options.agent = getProxyAgent(testEndpoint, proxyUrl);
 
     needle.get(testEndpoint, options, (error, response) => {

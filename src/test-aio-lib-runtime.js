@@ -1,47 +1,47 @@
 import runtimeSdk from '@adobe/aio-lib-runtime';
-import { TIMEOUT, USER_AGENT_BASE, RUNTIME_API_HOST } from './constants.js';
+import { USER_AGENT_BASE, RUNTIME_API_HOST, getProxyAgent } from './constants.js';
 
 /**
  * Test connection using @adobe/aio-lib-core-networking
  *
- * @param {string} proxyUrl - Proxy URL to use
  * @param {string} testEndpoint - The endpoint to test against
- * @param {number} timeout - Timeout in milliseconds
  * @param {string} userAgent - User agent string
  * @returns {Promise<Object>} - Test result
  */
 export async function testWithAioLibRuntime(
   testEndpoint, 
-  timeout = TIMEOUT, 
   userAgent = `${USER_AGENT_BASE}/aio-lib-runtime`
 ) {
   console.log('\n🔍 Testing with @adobe/aio-lib-runtime...');
   let sdkClient, errorResponse;
   
   try {
-    const options = {
-      timeout,
-      headers: {
-        'User-Agent': userAgent
-      }
-    };
-
-    // Use createFetch to create a fetch function that respects proxy settings
+    // don't do this in production, it's just for testing
     sdkClient = await runtimeSdk.init({ 
       apihost: testEndpoint,
       api_key: 'dummy_auth_key',
-      namespace: 'dummy_namespace' 
+      namespace: 'dummy_namespace'
+    })
+    // we get the proxy url from the sdk client
+    const proxyUrl = sdkClient.initOptions.proxy;
+
+    // we use the proxy url from the sdk client to initialize the agent
+    sdkClient = await runtimeSdk.init({ 
+      apihost: testEndpoint,
+      api_key: 'dummy_auth_key',
+      namespace: 'dummy_namespace',
+      agent: getProxyAgent(testEndpoint, proxyUrl)
     })
 
     errorResponse = {
       success: false,
       method: '@adobe/aio-lib-runtime (proxy aware)',
       error: 'not supposed to succeed here',
-      proxy: sdkClient.initOptions.proxy || 'none',
+      proxy: proxyUrl || 'none',
       endpoint: RUNTIME_API_HOST
     };
 
-    await sdkClient.packages.list();
+    await sdkClient.packages.list({ 'User-Agent': userAgent });
 
     // we expect it NOT to be OK, with a 401 status (exception expected)
     // if it got here below, it means it wasn't successful

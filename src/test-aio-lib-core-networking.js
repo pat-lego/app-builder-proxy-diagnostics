@@ -14,7 +14,7 @@ import { getProxyForUrl } from 'proxy-from-env';
 export async function testWithAioLibCoreNetworking(
   testEndpoint = PROXY_TEST_ENDPOINT, 
   timeout = TIMEOUT, 
-  userAgent = `${USER_AGENT_BASE}/aio-networking`
+  userAgent = `${USER_AGENT_BASE}/aio-lib-core-networking`
 ) {
   console.log('\n🔍 Testing with @adobe/aio-lib-core-networking...');
   
