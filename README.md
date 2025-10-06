@@ -4,11 +4,13 @@ A comprehensive tool to diagnose proxy network connections for Adobe App Builder
 
 ## Features
 
-- **Multiple Connection Methods**: Tests connectivity using four different approaches:
+- **Multiple Connection Methods**: Tests connectivity using multiple approaches:
   1. `@adobe/aio-lib-core-networking` package
   2. `@adobe/aio-lib-runtime` package
   3. `fetch` with `https-proxy-agent`/`http-proxy-agent` packages (and no proxy)
   4. `needle` with `https-proxy-agent`/`http-proxy-agent` packages
+  5. `got` with `https-proxy-agent`/`http-proxy-agent` packages
+  6. Native `https.request` with tunneling proxy support
 - **Comprehensive Reporting**: Detailed test results with success/failure status
 - **Environment Variable Support**: Uses `HTTPS_PROXY` and `HTTP_PROXY` environment variables
 
@@ -28,10 +30,14 @@ A comprehensive tool to diagnose proxy network connections for Adobe App Builder
 ├── src/
 │   ├── index.js                           # Main diagnostic tool
 │   ├── constants.js                       # Configuration constants
+│   ├── PatchedHttpsProxyAgent.js          # Custom HTTPS proxy agent
 │   ├── test-aio-lib-core-networking.js    # @adobe/aio-lib-core-networking test
 │   ├── test-aio-lib-runtime.js            # @adobe/aio-lib-runtime test
 │   ├── test-fetch-proxy.js                # fetch + proxy agents test
-│   └── test-needle-proxy.js               # needle + proxy agents test
+│   ├── test-needle-proxy.js               # needle + proxy agents test
+│   ├── test-got-proxy.js                  # got + proxy agents test
+│   └── test-https-with-tunneling-proxy.js # https.request with tunneling proxy test
+├── tests.json                             # Test configuration
 ├── package.json
 └── README.md
 ```
@@ -43,6 +49,11 @@ A comprehensive tool to diagnose proxy network connections for Adobe App Builder
 Run the diagnostic tool:
 ```bash
 npm start
+```
+
+With verbose flag:
+```bash
+npm start -- --verbose
 ```
 
 ### With Proxy Environment Variables
@@ -96,6 +107,12 @@ The tool provides detailed output including:
 📌 Testing with needle + proxy agents...
 ✅ needle + proxy agents: Connection successful
 
+📌 Testing with got + proxy agents...
+✅ got + proxy agents: Connection successful
+
+📌 Testing with https.request + tunneling proxy...
+✅ https.request with tunneling proxy: Connection successful
+
 📊 Test Results Summary:
 ==================================================
 ✅ @adobe/aio-lib-core-networking
@@ -118,7 +135,15 @@ The tool provides detailed output including:
    Proxy: http://proxy.company.com:8080
    Status: 200
 
-📈 Overall Success Rate: 5/5 (100%)
+✅ got + proxy agents
+   Proxy: http://proxy.company.com:8080
+   Status: 200
+
+✅ https.request with tunneling proxy
+   Proxy: http://proxy.company.com:8080
+   Status: 200
+
+📈 Overall Success Rate: 7/7 (100%)
 🎉 All tests passed! Proxy configuration is working correctly.
 ```
 
@@ -142,4 +167,5 @@ Ensure your proxy URLs follow the correct format:
 - `https-proxy-agent`: HTTPS proxy agent for Node.js
 - `http-proxy-agent`: HTTP proxy agent for Node.js
 - `needle`: HTTP client for Node.js
+- `got`: Human-friendly HTTP client for Node.js
 - `proxy-from-env`: Utility to extract proxy configuration from environment variables

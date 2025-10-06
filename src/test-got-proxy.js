@@ -1,8 +1,8 @@
-import { TIMEOUT, USER_AGENT_BASE } from './constants.js';
-import { fetch, ProxyAgent } from 'undici'
+import { TIMEOUT, USER_AGENT_BASE, getHpProxyAgent } from './constants.js';
+import got from 'got';
 
 /**
- * Test connection using fetch with proxy agents
+ * Test connection using got with proxy agents
  *
  * @param {string} proxyUrl - Proxy URL to use
  * @param {string} testEndpoint - The endpoint to test against
@@ -10,33 +10,37 @@ import { fetch, ProxyAgent } from 'undici'
  * @param {string} userAgent - User agent string
  * @returns {Promise<Object>} - Test result
  */
-export default async function testWithFetch({
+export default async function testWithGot({
   proxyUrl,
   testEndpoint,
   timeout = TIMEOUT,
-  userAgent = `${USER_AGENT_BASE}/fetch-proxy-agent`,
+  userAgent = `${USER_AGENT_BASE}/got-proxy-agent`,
   verbose = false
 } = {}) {
   try {
     const options = {
-      timeout,
+      method: 'GET',
+      timeout: {
+        request: timeout
+      },
       headers: {
         'User-Agent': userAgent
       }
     };
 
     if (proxyUrl) {
-      const agent = new ProxyAgent(proxyUrl)
-      options.dispatcher = agent
+      options.agent = { 
+        http: getHpProxyAgent(testEndpoint, proxyUrl),
+        https: getHpProxyAgent(testEndpoint, proxyUrl) 
+      };
     }
 
-    const response = await fetch(testEndpoint, options);
-    
-    if (response.ok) {
+    const response = await got(testEndpoint, options);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return {
         success: true,
-        method: proxyUrl ? 'fetch + proxy agents' : 'fetch (no proxy)',
-        status: response.status,
+        method: proxyUrl ? 'got + proxy agents' : 'got (no proxy)',
+        status: response.statusCode,
         proxy: proxyUrl || 'none',
         responseTime: Date.now(),
         endpoint: testEndpoint
@@ -50,7 +54,7 @@ export default async function testWithFetch({
     }
     return {
       success: false,
-      method: proxyUrl ? 'fetch + proxy agents' : 'fetch (no proxy)',
+      method: proxyUrl ? 'got + proxy agents' : 'got (no proxy)',
       error: error.message,
       proxy: proxyUrl || 'none',
       endpoint: testEndpoint

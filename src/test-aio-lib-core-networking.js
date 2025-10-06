@@ -14,7 +14,8 @@ import { getProxyForUrl } from 'proxy-from-env';
 export default async function testWithAioLibCoreNetworking({
   testEndpoint, 
   timeout = TIMEOUT, 
-  userAgent = `${USER_AGENT_BASE}/aio-lib-core-networking`
+  userAgent = `${USER_AGENT_BASE}/aio-lib-core-networking`,
+  verbose = false
   } = {}) {
   try {
     const options = {
@@ -44,6 +45,9 @@ export default async function testWithAioLibCoreNetworking({
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
   } catch (error) {
+    if (verbose) {
+      console.log(error);
+    }
     return {
       success: false,
       method: '@adobe/aio-lib-core-networking (proxy aware)',

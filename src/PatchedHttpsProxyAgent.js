@@ -9,12 +9,17 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
  * @private
  */
 export default class PatchedHttpsProxyAgent extends HttpsProxyAgent {
-    constructor (proxyUrl, opts) {
-      super(proxyUrl, opts)
-      this.savedOpts = opts
-    }
-  
-    async connect (req, opts) {
-      return super.connect(req, { ...this.savedOpts, ...opts })
-    }
+  constructor (proxyUrl, opts) {
+    super(proxyUrl, opts)
+    this.savedOpts = opts
+  }
+
+  async connect (req, opts) {
+    return super.connect(req, { 
+      ...this.savedOpts, 
+      keepAliveInitialDelay: 1000, 
+      keepAlive: true, 
+      ...opts
+    })
+  }
 }

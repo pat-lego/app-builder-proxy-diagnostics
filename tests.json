@@ -1,19 +1,30 @@
 [
     {
+        "name": "metadata",
+        "instructions": "This is the metadata for the tests. One of the uses is to ignore some tests for proxy testing. Remove the underscore on the _ignore key, and edit the list accordingly",
+        "_ignore": [
+            "aio-lib-core-networking",
+            "aio-lib-runtime",
+            "fetch (no proxy)",
+            "fetch with proxy agents",
+            "needle with proxy agents",
+            "got with proxy agents",
+            "https.request with tunneling proxy"
+        ]
+    },
+    {
         "name": "aio-lib-core-networking",
         "test": "test-aio-lib-core-networking",
         "args": {
             "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
-        },
-        "disabled": false
+        }
     },  
     {
         "name": "aio-lib-runtime",
         "test": "test-aio-lib-runtime",
         "args": {
             "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/runtime"
-        },
-        "disabled": false
+        }
     },
     {
         "name": "fetch (no proxy)",
@@ -21,23 +32,34 @@
         "args": {
             "proxyUrl": false,
             "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
-        },
-        "disabled": false
+        }
     },
     {
         "name": "fetch with proxy agents",
         "test": "test-fetch-proxy",
         "args": {
             "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
-        },
-        "disabled": false
+        }
     },
     {
         "name": "needle with proxy agents",
         "test": "test-needle-proxy",
         "args": {
             "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
-        },
-        "disabled": false
+        }
+    },
+    {
+        "name": "got with proxy agents",
+        "test": "test-got-proxy",
+        "args": {
+            "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
+        }
+    },
+    {
+        "name": "https.request with tunneling proxy",
+        "test": "test-https-with-tunneling-proxy",
+        "args": {
+            "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
+        }
     }
 ]

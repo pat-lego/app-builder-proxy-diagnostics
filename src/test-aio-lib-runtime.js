@@ -10,7 +10,8 @@ import { USER_AGENT_BASE, RUNTIME_API_HOST, getProxyAgent } from './constants.js
  */
 export default async function testWithAioLibRuntime({
   testEndpoint = RUNTIME_API_HOST, 
-  userAgent = `${USER_AGENT_BASE}/aio-lib-runtime`
+  userAgent = `${USER_AGENT_BASE}/aio-lib-runtime`,
+  verbose = false
   } = {}) {
   let sdkClient, errorResponse;
   
@@ -23,13 +24,14 @@ export default async function testWithAioLibRuntime({
     })
     // we get the proxy url from the sdk client
     const proxyUrl = sdkClient.initOptions.proxy;
+    const agent = getProxyAgent(testEndpoint, proxyUrl);
 
     // we use the proxy url from the sdk client to initialize the agent
     sdkClient = await runtimeSdk.init({ 
       apihost: testEndpoint,
       api_key: 'dummy_auth_key',
       namespace: 'dummy_namespace',
-      agent: getProxyAgent(testEndpoint, proxyUrl)
+      agent
     })
 
     errorResponse = {
@@ -46,6 +48,9 @@ export default async function testWithAioLibRuntime({
     // if it got here below, it means it wasn't successful
     return errorResponse;
   } catch (error) {
+    if (verbose) {
+      console.log(error);
+    }
     if (error.statusCode !== 401) {
       return errorResponse;
     }

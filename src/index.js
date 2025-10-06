@@ -6,7 +6,7 @@ import testConfigs from '../tests.json' with { type: 'json' };
 /**
  * Main diagnostic function
  */
-async function runDiagnostics() {
+async function runDiagnostics({ verbose = false }) {
   console.log('🚀 Starting Proxy Network Connection Diagnostics\n');
   
   // Get proxy URLs from environment variables
@@ -24,6 +24,9 @@ async function runDiagnostics() {
   
   const results = [];
 
+  // first item is metadata, we remove it
+const metadata = testConfigs.shift();
+
   for (const config of testConfigs) {
     const testFunction = (await import(`./${config.test}.js`)).default;
     const useProxy = config.args.proxyUrl !== false;
@@ -37,9 +40,10 @@ async function runDiagnostics() {
 
     const options = {
       ...config.args,
-      proxyUrl: useProxy ? proxyUrl : undefined
+      proxyUrl: useProxy ? proxyUrl : undefined,
+      verbose
     }
-    if (!config.disabled) {
+    if (!metadata.ignore?.includes(config.name)) {
       const result = await testFunction(options);
       results.push(result);
       if (result.success) {
@@ -73,21 +77,39 @@ async function runDiagnostics() {
   const successCount = results.filter(r => r.success).length;
   const totalCount = results.length;
   
-  console.log(`📈 Overall Success Rate: ${successCount}/${totalCount} (${Math.round(successCount/totalCount*100)}%)`);
+  console.log(`📈 Overall Success Rate: ${successCount}/${totalCount} (${Math.round((successCount/totalCount)*100)|0}%)`);
   
-  if (successCount === totalCount) {
+  if (successCount === totalCount && totalCount === 0) {
+    const err = new Error('⚠️  No tests were run. Check your tests.json file.');
+    err.testError = true;
+    throw err;
+  } else if (successCount === totalCount) {
     console.log('🎉 All tests passed! Proxy configuration is working correctly.');
   } else if (successCount > 0) {
-    console.log('⚠️  Some tests failed. Check the error messages above.');
+    const err = '⚠️  Some tests failed. Check the error messages above.'
+    err.testError = true;
+    throw err
   } else {
-    console.log('💥 All tests failed. Check your proxy configuration and network connectivity.');
+    const err = new Error('💥 All tests failed. Check your proxy configuration and network connectivity.');
+    err.testError = true;
+    throw err;
   }
 }
 
 // Handle command line execution
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runDiagnostics().catch(error => {
-    console.error('💥 Fatal error:', error);
+  const verbose = process.argv.includes('--verbose');
+  
+  runDiagnostics({ verbose}).catch(error => {
+    if (error.testError) {
+      if (verbose) {
+        console.log(error);
+      } else {
+        console.log(error.message);
+      }
+    } else {
+      console.error('💥 Fatal error:', error);
+    }
     process.exit(1);
   });
 }

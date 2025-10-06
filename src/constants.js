@@ -1,7 +1,7 @@
 // import { HttpsProxyAgent } from 'https-proxy-agent';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import PatchedHttpsProxyAgent from './PatchedHttpsProxyAgent.js';
-import { HttpProxyAgent as HpHttpProxyAgent, HttpsProxyAgent as HpHttpsProxyAgent } from 'hpagent';
+import { HttpsProxyAgent as HpHttpsProxyAgent, HttpProxyAgent as HpHttpProxyAgent } from 'hpagent';
 
 // Configuration constants
 // export const PROXY_TEST_ENDPOINT = 'https://deploy-service.app-builder.adp.adobe.io/ping';
@@ -27,17 +27,23 @@ export function getProxyAgent(endpoint, proxyUrl, proxyOptions = {}) {
 }
 
 /**
- * Get the proxy agent for the given endpoint (hpagent)
+ * Get the proxy agent for the given endpoint using hpagent
  *
  * @param {string} endpoint - The endpoint to get the proxy agent for
  * @param {string} proxyUrl - The proxy URL to use
  * @param {Object} proxyOptions - The proxy options to use
- * @returns {HttpsProxyAgent | HttpProxyAgent} - The proxy agent (hpagent)
+ * @returns {HpHttpsProxyAgent | HpHttpProxyAgent} - The proxy agent
  */
 export function getHpProxyAgent(endpoint, proxyUrl, proxyOptions = {}) {
+    const options = {
+        keepAlive: true,
+        ...proxyOptions,
+        proxy: proxyUrl
+    };
+
     if (endpoint.startsWith('https')) {
-        return new HpHttpsProxyAgent(proxyUrl, proxyOptions);
+        return new HpHttpsProxyAgent(options);
     } else {
-        return new HpHttpProxyAgent(proxyUrl, proxyOptions);
+        return new HpHttpProxyAgent(options);
     }
 }
