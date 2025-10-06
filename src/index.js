@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { getProxyForUrl } from 'proxy-from-env';
-import testConfigs from '../tests.json' with { type: 'json' }; 
+import testConfigs from '../tests.json' assert { type: 'json' }; 
 
 /**
  * Main diagnostic function
