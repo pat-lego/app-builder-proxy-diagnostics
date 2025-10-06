@@ -17,6 +17,9 @@
   ],
   "author": "",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "dependencies": {
     "@adobe/aio-lib-core-networking": "^5",
     "@adobe/aio-lib-runtime": "^7.1.7",
