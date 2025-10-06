@@ -17,14 +17,6 @@ export default async function testWithNeedle({
   verbose = false
 } = {}) {
   return new Promise(async (resolve) => { 
-    const proxyUrlParts = new URL(proxyUrl);
-    const proxyOptions = {
-      proxy: {
-        host: proxyUrlParts.hostname,
-        port: proxyUrlParts.port || (proxyUrlParts.protocol === 'https:' ? 443 : 80),
-        protocol: proxyUrlParts.protocol
-      }
-    }
     const agent = getProxyAgent(testEndpoint, proxyUrl);
 
     const options = {
@@ -33,6 +25,7 @@ export default async function testWithNeedle({
         'User-Agent': userAgent
       },
       agent,
+      use_proxy_from_env_var: false,
       url: testEndpoint
     };
 
