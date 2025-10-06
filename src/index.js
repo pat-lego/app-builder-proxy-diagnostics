@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 
-import { testWithAioLibCoreNetworking } from './test-aio-lib-core-networking.js';
-import { testWithAioLibRuntime } from './test-aio-lib-runtime.js';
-import { testWithFetch } from './test-fetch-proxy.js';
-import { testWithNeedle } from './test-needle-proxy.js';
-import { PROXY_TEST_ENDPOINT, RUNTIME_API_HOST } from './constants.js';
 import { getProxyForUrl } from 'proxy-from-env';
+import testConfigs from '../tests.json' with { type: 'json' }; 
 
 /**
  * Main diagnostic function
@@ -23,34 +19,39 @@ async function runDiagnostics() {
   console.log(`   HTTP_PROXY: ${httpProxy || 'not set'}`);
   console.log(`   NO_PROXY: ${noProxy || 'not set'}`);
   
-  const proxyUrl = getProxyForUrl(PROXY_TEST_ENDPOINT);
-  if (!proxyUrl) {
-    console.log('💥 No proxy found for the test endpoint ${PROXY_TEST_ENDPOINT}. Exiting with error.');
-    console.log('Please check your proxy configuration and ensure the proxy servers are set as env vars.');
-    process.exit(1);
-  }
-
-  // Run all connection tests
+    // Run all connection tests
   console.log('\n🧪 Running Connection Tests...');
-  console.log(`   Test endpoint: ${PROXY_TEST_ENDPOINT}`);
   
   const results = [];
 
-  // Test with fetch (no proxy)
-  results.push(await testWithFetch(null));
+  for (const config of testConfigs) {
+    const testFunction = (await import(`./${config.test}.js`)).default;
+    const useProxy = config.args.proxyUrl !== false;
 
-  // Test with @adobe/aio-lib-core-networking
-  results.push(await testWithAioLibCoreNetworking());
-  
-  // Test with @adobe/aio-lib-runtime
-  results.push(await testWithAioLibRuntime(RUNTIME_API_HOST));
+    let proxyUrl = getProxyForUrl(config.args.testEndpoint)
+    if (!proxyUrl && useProxy) {
+      console.log(`💥 No proxy found for the test endpoint ${config.args.testEndpoint}. Exiting with error.`);
+      console.log('Please check your proxy configuration and ensure the proxy servers are set as env vars.');
+      process.exit(1);
+    }
 
-  // Test with fetch + proxy agents
-  results.push(await testWithFetch(proxyUrl));
-  
-  // Test with needle + proxy agents
-  results.push(await testWithNeedle(proxyUrl));
-  
+    const options = {
+      ...config.args,
+      proxyUrl: useProxy ? proxyUrl : undefined
+    }
+    if (!config.disabled) {
+      const result = await testFunction(options);
+      results.push(result);
+      if (result.success) {
+        console.log(`✅ Test "${config.name}" is successful.`);
+      } else {
+        console.log(`❌ Test "${config.name}" failed.`);
+      }
+    } else {
+      console.log(`⛔ Test "${config.name}" is disabled`);
+    }
+  }
+
   // Summary
   console.log('\n📊 Test Results Summary:');
   console.log('=' .repeat(50));
@@ -86,7 +87,7 @@ async function runDiagnostics() {
 // Handle command line execution
 if (import.meta.url === `file://${process.argv[1]}`) {
   runDiagnostics().catch(error => {
-    console.error('💥 Fatal error:', error.message);
+    console.error('💥 Fatal error:', error);
     process.exit(1);
   });
 }

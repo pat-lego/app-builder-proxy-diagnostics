@@ -1,0 +1,43 @@
+[
+    {
+        "name": "aio-lib-core-networking",
+        "test": "test-aio-lib-core-networking",
+        "args": {
+            "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
+        },
+        "disabled": false
+    },  
+    {
+        "name": "aio-lib-runtime",
+        "test": "test-aio-lib-runtime",
+        "args": {
+            "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/runtime"
+        },
+        "disabled": false
+    },
+    {
+        "name": "fetch (no proxy)",
+        "test": "test-fetch-proxy",
+        "args": {
+            "proxyUrl": false,
+            "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
+        },
+        "disabled": false
+    },
+    {
+        "name": "fetch with proxy agents",
+        "test": "test-fetch-proxy",
+        "args": {
+            "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
+        },
+        "disabled": false
+    },
+    {
+        "name": "needle with proxy agents",
+        "test": "test-needle-proxy",
+        "args": {
+            "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"
+        },
+        "disabled": false
+    }
+]

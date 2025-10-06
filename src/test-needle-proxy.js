@@ -1,5 +1,5 @@
 import needle from 'needle';
-import { PROXY_TEST_ENDPOINT, TIMEOUT, USER_AGENT_BASE, getProxyAgent } from './constants.js';
+import { TIMEOUT, USER_AGENT_BASE, getProxyAgent, getHpProxyAgent } from './constants.js';
 
 /**
  * Test connection using needle with proxy agents
@@ -9,14 +9,12 @@ import { PROXY_TEST_ENDPOINT, TIMEOUT, USER_AGENT_BASE, getProxyAgent } from './
  * @param {string} userAgent - User agent string
  * @returns {Promise<Object>} - Test result
  */
-export async function testWithNeedle(
+export default async function testWithNeedle({
   proxyUrl,
-  testEndpoint = PROXY_TEST_ENDPOINT,
+  testEndpoint,
   timeout = TIMEOUT,
   userAgent = `${USER_AGENT_BASE}/needle-proxy-agent`
-) {
-  console.log('\n🔍 Testing with needle + proxy agents...');
-  
+} = {}) {
   return new Promise((resolve) => {
     const options = {
       timeout: timeout,
@@ -30,7 +28,6 @@ export async function testWithNeedle(
 
     needle.get(testEndpoint, options, (error, response) => {
       if (error) {
-        console.log(`❌ needle + proxy agents: ${error.message}`);
         resolve({
           success: false,
           method: 'needle + proxy agents',
@@ -38,7 +35,6 @@ export async function testWithNeedle(
           proxy: proxyUrl || 'none'
         });
       } else if (response.statusCode >= 200 && response.statusCode < 300) {
-        console.log('✅ needle + proxy agents: Connection successful');
         resolve({
           success: true,
           method: 'needle + proxy agents',
@@ -48,7 +44,6 @@ export async function testWithNeedle(
           endpoint: testEndpoint
         });
       } else {
-        console.log(`❌ needle + proxy agents: HTTP ${response.statusCode}`);
         resolve({
           success: false,
           method: 'needle + proxy agents',

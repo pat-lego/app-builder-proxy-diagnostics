@@ -1,5 +1,5 @@
 import { createFetch } from '@adobe/aio-lib-core-networking';
-import { PROXY_TEST_ENDPOINT, TIMEOUT, USER_AGENT_BASE } from './constants.js';
+import { TIMEOUT, USER_AGENT_BASE } from './constants.js';
 import { getProxyForUrl } from 'proxy-from-env';
 
 /**
@@ -11,13 +11,11 @@ import { getProxyForUrl } from 'proxy-from-env';
  * @param {string} userAgent - User agent string
  * @returns {Promise<Object>} - Test result
  */
-export async function testWithAioLibCoreNetworking(
-  testEndpoint = PROXY_TEST_ENDPOINT, 
+export default async function testWithAioLibCoreNetworking({
+  testEndpoint, 
   timeout = TIMEOUT, 
   userAgent = `${USER_AGENT_BASE}/aio-lib-core-networking`
-) {
-  console.log('\n🔍 Testing with @adobe/aio-lib-core-networking...');
-  
+  } = {}) {
   try {
     const options = {
       timeout,
@@ -34,7 +32,6 @@ export async function testWithAioLibCoreNetworking(
     const response = await proxyFetch(testEndpoint, options);
     
     if (response.ok) {
-      console.log('✅ @adobe/aio-lib-core-networking: Connection successful');
       return {
         success: true,
         method: '@adobe/aio-lib-core-networking (proxy aware)',
@@ -47,7 +44,6 @@ export async function testWithAioLibCoreNetworking(
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
   } catch (error) {
-    console.log(`❌ @adobe/aio-lib-core-networking: ${error.message}`);
     return {
       success: false,
       method: '@adobe/aio-lib-core-networking (proxy aware)',

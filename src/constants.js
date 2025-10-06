@@ -1,9 +1,10 @@
-import { HttpsProxyAgent } from 'https-proxy-agent';
+// import { HttpsProxyAgent } from 'https-proxy-agent';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import PatchedHttpsProxyAgent from './PatchedHttpsProxyAgent.js';
+import { HttpProxyAgent as HpHttpProxyAgent, HttpsProxyAgent as HpHttpsProxyAgent } from 'hpagent';
 
 // Configuration constants
-export const PROXY_TEST_ENDPOINT = 'https://deploy-service.app-builder.adp.adobe.io/ping';
+// export const PROXY_TEST_ENDPOINT = 'https://deploy-service.app-builder.adp.adobe.io/ping';
 export const RUNTIME_API_HOST = 'https://deploy-service.app-builder.adp.adobe.io/runtime';
 export const TIMEOUT = 30000; // 30 seconds
 export const USER_AGENT_VERSION = process.env.npm_package_version || '1.0.x';
@@ -22,5 +23,21 @@ export function getProxyAgent(endpoint, proxyUrl, proxyOptions = {}) {
         return new PatchedHttpsProxyAgent(proxyUrl, proxyOptions);
     } else {
         return new HttpProxyAgent(proxyUrl, proxyOptions);
+    }
+}
+
+/**
+ * Get the proxy agent for the given endpoint (hpagent)
+ *
+ * @param {string} endpoint - The endpoint to get the proxy agent for
+ * @param {string} proxyUrl - The proxy URL to use
+ * @param {Object} proxyOptions - The proxy options to use
+ * @returns {HttpsProxyAgent | HttpProxyAgent} - The proxy agent (hpagent)
+ */
+export function getHpProxyAgent(endpoint, proxyUrl, proxyOptions = {}) {
+    if (endpoint.startsWith('https')) {
+        return new HpHttpsProxyAgent(proxyUrl, proxyOptions);
+    } else {
+        return new HpHttpProxyAgent(proxyUrl, proxyOptions);
     }
 }

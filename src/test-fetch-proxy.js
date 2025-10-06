@@ -1,4 +1,4 @@
-import { PROXY_TEST_ENDPOINT, TIMEOUT, USER_AGENT_BASE, getProxyAgent } from './constants.js';
+import { TIMEOUT, USER_AGENT_BASE, getProxyAgent } from './constants.js';
 import { fetch, ProxyAgent } from 'undici'
 
 /**
@@ -10,14 +10,12 @@ import { fetch, ProxyAgent } from 'undici'
  * @param {string} userAgent - User agent string
  * @returns {Promise<Object>} - Test result
  */
-export async function testWithFetch(
+export default async function testWithFetch({
   proxyUrl,
-  testEndpoint = PROXY_TEST_ENDPOINT,
+  testEndpoint,
   timeout = TIMEOUT,
   userAgent = `${USER_AGENT_BASE}/fetch-proxy-agent`
-) {
-  console.log('\n🔍 Testing with fetch + proxy agents...');
-  
+} = {}) {
   try {
     const options = {
       timeout: timeout,
@@ -34,7 +32,6 @@ export async function testWithFetch(
     const response = await fetch(testEndpoint, options);
     
     if (response.ok) {
-      console.log('✅ fetch + proxy agents: Connection successful');
       return {
         success: true,
         method: proxyUrl ? 'fetch + proxy agents' : 'fetch (no proxy)',
@@ -47,7 +44,7 @@ export async function testWithFetch(
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
   } catch (error) {
-    console.log(`❌ fetch + proxy agents: ${error.message}`);
+    console.log('XXXXXerror', error);
     return {
       success: false,
       method: proxyUrl ? 'fetch + proxy agents' : 'fetch (no proxy)',
