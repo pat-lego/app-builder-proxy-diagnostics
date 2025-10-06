@@ -1,6 +1,6 @@
 {
   "name": "@adobe/app-builder-proxy-diagnostics",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A tool to diagnose proxy network connections using multiple methods",
   "type": "module",
   "main": "src/index.js",

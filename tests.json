@@ -29,6 +29,7 @@
     {
         "name": "fetch (no proxy)",
         "test": "test-fetch-proxy",
+        "comment": "this test is expected to fail if you have a firewall and proxy configured",
         "args": {
             "proxyUrl": false,
             "testEndpoint": "https://deploy-service.app-builder.adp.adobe.io/ping"

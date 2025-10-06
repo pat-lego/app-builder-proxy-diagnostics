@@ -49,7 +49,7 @@ const metadata = testConfigs.shift();
       if (result.success) {
         console.log(`✅ Test "${config.name}" is successful.`);
       } else {
-        console.log(`❌ Test "${config.name}" failed.`);
+        console.log(`❌ Test "${config.name}" failed. ${config.comment ? `(${config.comment})` : ''}`);
       }
     } else {
       console.log(`⛔ Test "${config.name}" is disabled`);
